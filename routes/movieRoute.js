@@ -1,12 +1,13 @@
-/** Required Variables **/
-const express = require('express');
-const router = express.Router();
+const router = require("express").Router();
+const movieController = require('../controllers/movieController')
+//const {isAuthenticated} = require("../utilities/authenticate");
 
 
-/** Routes **/
-// Change this how you need it to talk to the controller checking
-router.get('/', (req, res) => {res.json( {message: 'Movies!'} )});
+router.get('/', movieController.getAllMovies);
+router.get('/:id', movieController.getSingleMoviebyID);
+router.post('/', movieController.createMovie);
+router.put('/:id', movieController.updateMovie);
+router.delete('/:id', movieController.deleteMovie);
 
 
-/** Export **/
-module.exports = router;
+module.exports = router

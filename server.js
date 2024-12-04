@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dbConnection = require('./mongodb/connect');
 // On the dev side set the port to 2024
-const PORT = process.env.PORT || 2024;
+const PORT = process.env.PORT || 8080;
 const app = express();
 
 
