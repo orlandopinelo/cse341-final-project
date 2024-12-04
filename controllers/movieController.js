@@ -115,6 +115,25 @@ const getSingleMovieById = async (req, res) => {
     }
 };
 
+const getMoviesByGenre = async (req, res) => {
+    try {
+        //#swagger.tags=['Movies']
+        const { genre } = req.params; // Extract the genre from the request parameter
+
+        // Use a case-insensitive query to find movies by genre
+        const movies = await movieSchema.find({ genre: new RegExp(`^${genre}$`, 'i') });
+
+        if (movies.length === 0) {
+            return res.status(404).json({ error: 'No movies found for this genre' });
+        }
+
+        res.status(200).json(movies);
+    } catch (error) {
+        console.error('Error fetching movies by genre:', error.message);
+        res.status(500).json({ error: 'Failed to fetch movies by genre' });
+    }
+};
+
 
 
 
@@ -199,4 +218,4 @@ const deleteMovie = async (req, res) => {
 
 
 
-module.exports = {getAllMovies,createMovie,updateMovie,deleteMovie,getSingleMovieByName,getSingleMovieById};
+module.exports = {getAllMovies,createMovie,updateMovie,deleteMovie,getSingleMovieByName,getSingleMovieById,getMoviesByGenre};
