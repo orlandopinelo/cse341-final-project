@@ -1,5 +1,5 @@
 const movieSchema = require('../models/Movie');
-
+const mongoose = require('mongoose');
 
 const getAllMovies = async (req, res) => {
     try {
@@ -13,22 +13,108 @@ const getAllMovies = async (req, res) => {
 };
  
 
-const getSingleMoviebyID = async (req, res) => {
+// const getSingleMoviebyID = async (req, res) => {
+//     try {
+//         //#swagger.tags=['Movies']
+//         const movieId = req.params.id; // Mongoose handles string to ObjectId conversion
+//         const movie = await movieSchema.findById(movieId);
+
+//         if (!movie) {
+//             return res.status(404).json({ error: 'Movie not found' });
+//         }
+
+//         res.status(200).json(movie);
+//     } catch (error) {
+//         console.error('Error fetching movie:', error.message);
+//         res.status(500).json({ error: 'Failed to fetch movie' });
+//     }
+// };
+
+// const getSingleMoviebyMovieName = async (req, res) => {
+//     try {
+//         //#swagger.tags=['Movies']
+//         const movieName = req.params.movieName; // Mongoose handles string to ObjectId conversion
+//         //const movie = await movieSchema.findOne({movieName: movieName});
+//         const movie = await movieSchema.findOne({ movieName: new RegExp(movieName, 'i') });
+
+//         if (!movie) {
+//             return res.status(404).json({ error: 'Movie name not found' });
+//         }
+
+//         res.status(200).json(movie);
+//     } catch (error) {
+//         console.error('Error fetching movie name:', error.message);
+//         res.status(500).json({ error: 'Failed to fetch movie name' });
+//     }
+// };
+
+// const getSingleMovieByIdOrName = async (req, res) => {
+//     try {
+//         //#swagger.tags=['Movies']
+//         const { idOrName } = req.params; // Assuming the parameter is passed as `idOrName`
+
+//         let query;
+//         if (mongoose.Types.ObjectId.isValid(idOrName)) {
+//             // If the input is a valid ObjectId, search by `_id`
+//             query = { _id: idOrName };
+//         } else {
+//             // Otherwise, search by `name`
+//             query = { movieName: idOrName };
+//         }
+
+//         const movie = await movieSchema.findOne(query);
+
+//         if (!movie) {
+//             return res.status(404).json({ error: 'Movie not found' });
+//         }
+
+//         res.status(200).json(movie);
+//     } catch (error) {
+//         console.error('Error fetching movie:', error.message);
+//         res.status(500).json({ error: 'Failed to fetch movie' });
+//     }
+// };
+
+const getSingleMovieByName = async (req, res) => {
     try {
         //#swagger.tags=['Movies']
-        const movieId = req.params.id; // Mongoose handles string to ObjectId conversion
-        const movie = await movieSchema.findById(movieId);
+        const { movieName } = req.params; // Extract the movie name from the route parameter
+       //const movie = await movieSchema.findOne({ movieName: movieName });
+        const movie = await movieSchema.findOne({ movieName: new RegExp(`^${movieName}$`, 'i') });
+
 
         if (!movie) {
-            return res.status(404).json({ error: 'Movie not found' });
+            return res.status(404).json({ error: 'Movie not found by name' });
         }
 
         res.status(200).json(movie);
     } catch (error) {
-        console.error('Error fetching movie:', error.message);
-        res.status(500).json({ error: 'Failed to fetch movie' });
+        console.error('Error fetching movie by name:', error.message);
+        res.status(500).json({ error: 'Failed to fetch movie by name' });
     }
 };
+const getSingleMovieById = async (req, res) => {
+    try {
+        //#swagger.tags=['Movies']
+        const { id } = req.params; // Extract the ID from the route parameter
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid movie ID format' });
+        }
+
+        const movie = await movieSchema.findById(id);
+
+        if (!movie) {
+            return res.status(404).json({ error: 'Movie not found by ID' });
+        }
+
+        res.status(200).json(movie);
+    } catch (error) {
+        console.error('Error fetching movie by ID:', error.message);
+        res.status(500).json({ error: 'Failed to fetch movie by ID' });
+    }
+};
+
 
 
 
@@ -113,4 +199,4 @@ const deleteMovie = async (req, res) => {
 
 
 
-module.exports = {getAllMovies,getSingleMoviebyID,createMovie,updateMovie,deleteMovie};
+module.exports = {getAllMovies,createMovie,updateMovie,deleteMovie,getSingleMovieByName,getSingleMovieById};
